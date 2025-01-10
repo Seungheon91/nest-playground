@@ -10,31 +10,31 @@ import {
 import { UserService } from './user.service';
 import { User } from './user.entity';
 
-@Controller()
+@Controller('/users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('/users')
+  @Get()
   getAllUsers(): Promise<User[]> {
     return this.userService.getAllUsers();
   }
 
-  @Get('/users/:id')
+  @Get('/:id')
   getUserById(@Param('id') id: number): Promise<User> {
     return this.userService.getUserById(id);
   }
 
-  @Post('/users')
+  @Post()
   createUser(@Body() user: User): Promise<User> {
     return this.userService.createUser(user);
   }
 
-  @Put('/users/:id')
+  @Put('/:id')
   updateUser(@Param('id') id: number, @Body() user: User): Promise<User> {
     return this.userService.updateUser(id, user);
   }
 
-  @Delete('/users/:id')
+  @Delete('/:id')
   deleteUser(@Param('id') id: number): Promise<void> {
     return this.userService.deleteUser(id);
   }
