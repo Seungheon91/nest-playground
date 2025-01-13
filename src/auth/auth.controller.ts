@@ -14,8 +14,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() body: { username: string; password: string }) {
-    return this.authService.register(body.username, body.password);
+  async register(
+    @Body() body: { username: string; email: string; password: string },
+  ) {
+    return this.authService.register(body.username, body.password, body.email);
   }
 
   @Post('login')
@@ -28,6 +30,11 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     return this.authService.login(user);
+  }
+
+  @Post('refresh')
+  async refresh(@Body() body: { refreshToken: string }) {
+    return this.authService.refresh(body.refreshToken);
   }
 
   @UseGuards(JwtAuthGuard)
