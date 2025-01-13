@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger('AuthService');
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(RefreshToken)
@@ -19,8 +20,8 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.userRepository.create({
       username,
-      password: hashedPassword,
       email,
+      password: hashedPassword,
     });
     return this.userRepository.save(newUser);
   }
@@ -42,6 +43,8 @@ export class AuthService {
       },
     );
 
+    this.logger.log(accessToken);
+
     const refreshToken = this.jwtService.sign(
       {
         id: user.id,
@@ -51,6 +54,7 @@ export class AuthService {
         expiresIn: process.env.JWT_REFRESH_EXPIRATION,
       },
     );
+    this.logger.log(refreshToken);
 
     await this.refreshTokenRepository.save({
       user,
